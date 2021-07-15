@@ -1,12 +1,15 @@
 package com.example.calwrite.ui.login
 
+import android.app.Activity
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.calwrite.R
 import com.example.calwrite.data.LoginRepository
 import com.example.calwrite.data.Result
+import kotlinx.coroutines.launch
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
@@ -17,7 +20,6 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     val loginResult: LiveData<LoginResult> = _loginResult
 
     fun login(username: String, password: String) {
-        // Can be launched in a separate asynchronous job
         val result = loginRepository.login(username, password)
 
         if (result is Result.Success) {
@@ -25,6 +27,18 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                 LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
         } else {
             _loginResult.value = LoginResult(error = R.string.login_failed)
+        }
+    }
+
+    fun loginOAuth(activity: Activity, provider: String) {
+        viewModelScope.launch {
+            val result = loginRepository.loginOAuth(activity, provider)
+            if (result is Result.Success) {
+                _loginResult.value =
+                    LoginResult(success = LoggedInUserView(displayName = ""))
+            } else {
+                _loginResult.value = LoginResult(error = R.string.login_failed)
+            }
         }
     }
 

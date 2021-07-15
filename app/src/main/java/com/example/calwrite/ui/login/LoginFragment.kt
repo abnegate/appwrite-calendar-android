@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,7 @@ class LoginFragment : Fragment() {
         val usernameEditText = binding.username
         val passwordEditText = binding.password
         val loginButton = binding.login
+        val loginFbButton = binding.loginfb;
         val loadingProgressBar = binding.loading
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
@@ -70,11 +72,9 @@ class LoginFragment : Fragment() {
 
         val afterTextChangedListener = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // ignore
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // ignore
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -104,6 +104,13 @@ class LoginFragment : Fragment() {
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
+        }
+
+        loginFbButton.setOnClickListener {
+            loadingProgressBar.visibility = View.VISIBLE
+            activity?.let {
+                loginViewModel.loginOAuth(it, "facebook")
+            }
         }
     }
 

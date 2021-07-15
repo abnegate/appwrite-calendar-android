@@ -1,5 +1,6 @@
 package com.example.calwrite.data
 
+import android.app.Activity
 import com.example.calwrite.data.model.LoggedInUser
 
 /**
@@ -25,12 +26,12 @@ class LoginRepository(val dataSource: LoginDataSource) {
     fun login(username: String, password: String): Result<LoggedInUser> {
         val result = dataSource.login(username, password)
         if (result is Result.Success) {
-            setLoggedInUser(result.data)
+            user = result.data
         }
         return result
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
-        user = loggedInUser
+    suspend fun loginOAuth(activity: Activity, provider: String): Result<Boolean> {
+        return dataSource.loginOAuth(activity, provider)
     }
 }
